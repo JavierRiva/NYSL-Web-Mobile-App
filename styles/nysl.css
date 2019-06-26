@@ -1,0 +1,60 @@
+body {
+    background: url(images/soccer.png);
+    background-size: 100%;
+
+}
+
+.index, .game-info, .results, .positions, .team-players {
+    border-style: dashed;
+}
+
+td, th {
+    text-align: center;
+}
+.navbar {
+    background-color: #7fff00;
+}
+
+.navbar-brand {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.btn {
+    border: none;
+    color: darkslategrey;
+    padding: 12px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#sign-in-button {
+    background-color: greenyellow;
+}
+
+
+#page-splash {
+    position: absolute !important;
+}
+
+#match-details {
+    color: blue;
+}
+
+@media (orientation: portrait) {
+    #address-map {
+        display: none;
+    }
+}
+
+@media (orientation: portrait) {
+    #positions-details {
+        display: none;
+    }
+}
+
+#postsTitle {
+    font-style: italic;
+    color: darkblue;
+}
+

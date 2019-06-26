@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/nysl.css">
+    <link rel="shortcut icon" sizes="196x196" href="styles/images/nysl_logo.png">
+    <link rel="apple-touch-icon" href="styles/images/nysl_logo.png">
+
+    <meta name="apple-mobile-web-app-title" content="NYSL">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <title>NYSL Page</title>
+
+</head>
+
+<body>
+    <div class="container" id="app">
+
+        <header>
+            <nav class="navbar navbar-light">
+                <div class="row">
+
+                    <div class="col-2">
+                        <span>
+                            <img src="styles/images/nysl_logo.png" class="img-fluid" alt="Responsive image" id="logo">
+                        </span>
+                    </div>
+
+                    <div class="col-8 text-center">
+                        <span class="navbar-brand mb-0 h1">Northside Youth SL</span>
+                    </div>
+
+                    <div class="col-2">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+
+                    </div>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav mr-auto">
+                        <li>
+                            <a @click="toggleShowIndex">Home</a>
+                        </li>
+                        <li>
+                            <a @click="toggleShowGameInfo">Game Information</a>
+                        </li>
+                        <li>
+                            <a @click="toggleShowResults">Results</a>
+                        </li>
+                        <li>
+                            <a @click="toggleShowPositions">Positions</a>
+                        </li>
+                        <li>
+                            <a @click="toggleShowTeam">Team Players</a>
+                        </li>
+                        <li>
+                            <a @click='sendMail'>Contact</a> 
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <!-- index -->
+
+        <div class="index" v-show=showIndex>
+
+            <div class="row justify-content-center">
+                <div class="col">
+                    <div class="text-center">
+                        <h1>Upcoming Events</h1>
+
+                        <h2>August 4</h2>
+                        <p class="indent">NYSL Fundraiser</p>
+
+                        <h2>August 16</h2>
+                        <p class="indent">Season Kick-off: Meet the Teams</p>
+
+                        <h2>September 1</h2>
+                        <p class="indent"> First Game of the Season (Check Game Schedule for details)</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- game information -->
+
+        <div class="game-info" v-show=showGameInfo>
+
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Time</th>
+                                    <th scope="col">Match</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="match in matches">
+                                    <td>{{match.date}}</td>
+                                    <td>{{match.time}}</td>
+                                    <td @click="map=match.iframe, place=match.location" id='match-details'>
+                                        {{match.team1}} vs {{match.team2}}
+                                        <button style="font-size:24px" class="chat-button"
+                                            @click="toggleShowChat(match.matchId, match.date, match.location)"><i
+                                                class="fa fa-edit"></i></button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-6" id="address-map">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Match Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Location: {{place}}</td>
+                                </tr>
+                                <tr>
+                                    <td><iframe v-bind:src="map" width="500" height="400" frameborder="0"
+                                            style="border:0" allowfullscreen></iframe></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- chat -->
+
+        <div id="chat" v-show=showChat>
+            <div class="row justify-content-center">
+                <div class="col">
+                    <section id="page-splash" v-show=showPageSplash>
+                        <div>
+                            <button type="button" class="btn btn-primary" id="sign-in-button" @click='signIn'>Sign in
+                                with Google</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <section id="postsView" v-show=showPosts>
+                <div class="row">
+                    <div class="col">
+                        <h3 id='postsTitle'>Posts of {{date}} at {{location}}</h3>
+                        <div id="chatMessages">
+                            <div v-for="message in messages">
+                                <span><strong>{{ message.author }} says:</strong> {{ message.text }}</span>
+                            </div>
+                        </div>
+
+                        <input type="text" id="messageText" ref="messageText">
+                        <button type="button" class="btn btn-info" @click="sendMessage">Submit</button>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <button type="button" class="btn btn-warning" id="sign-out-button" @click='signOut'>Sign
+                            out</button>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+
+
+        <!-- results -->
+
+        <div class="results" v-show=showResults>
+
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Team</th>
+                                    <th scope="col">Score</th>
+                                    <th scope="col">Team</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="match in matches">
+                                    <td>{{match.date}}</td>
+                                    <td>{{match.team1}}</td>
+                                    <td>{{match.score1}} - {{match.score2}}</td>
+                                    <td>{{match.team2}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- positions -->
+
+        <div class="positions" v-show=showPositions>
+
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Position</th>
+                                    <th scope="col">Team</th>
+                                    <th scope="col">Points</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="position in positions">
+                                    <td>{{position.position}}</td>
+                                    <td>{{position.team}}</td>
+                                    <td>{{position.points}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-6" id="positions-details">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Matches</th>
+                                    <th scope="col">Won</th>
+                                    <th scope="col">Tied</th>
+                                    <th scope="col">Lost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="position in positions">
+                                    <td>{{position.played}}</td>
+                                    <td>{{position.won}}</td>
+                                    <td>{{position.tied}}</td>
+                                    <td>{{position.lost}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- team players-->
+
+        <div class="team-players" v-show=showTeam>
+
+            <div class="row">
+                <div class="col">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Team</th>
+                                    <th scope="col">Players</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="player in players">
+                                    <td>{{player.team}}</td>
+                                    <td>{{player.player1}} - {{player.player2}} - {{player.player3}} -
+                                        {{player.player4}} - {{player.player5}} - {{player.player6}} -
+                                        {{player.player7}} - {{player.player8}} - {{player.player9}} -
+                                        {{player.player10}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="https://www.gstatic.com/firebasejs/5.10.1/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyCU30-Y3Ki885s6-WrthDp2Kxqg8jmc3YM",
+            authDomain: "nysl-posts.firebaseapp.com",
+            databaseURL: "https://nysl-posts.firebaseio.com",
+            projectId: "nysl-posts",
+            storageBucket: "nysl-posts.appspot.com",
+            messagingSenderId: "699434293847"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    <script src="https://unpkg.com/vue/dist/vue.js "></script>
+
+
+    <script src="scripts/data.js "></script>
+    <script src="scripts/nysl.js "></script>
+
+</body>
+
+</html>
